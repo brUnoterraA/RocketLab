@@ -1,0 +1,29 @@
+resources:
+  jobs:
+    cine_data_pipeline:
+      name: cine_data_pipeline
+      schedule:
+        quartz_cron_expression: 39 0 5 * * ?
+        timezone_id: America/Sao_Paulo
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: to_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/brunosilverio112005@gmail.com/Landing_to_bronze
+            source: WORKSPACE
+        - task_key: to_silver
+          depends_on:
+            - task_key: to_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/brunosilverio112005@gmail.com/Bronze_to_silver
+            source: WORKSPACE
+        - task_key: to_gold
+          depends_on:
+            - task_key: to_silver
+          notebook_task:
+            notebook_path: /Workspace/Users/brunosilverio112005@gmail.com/Silver_to_gold
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
+
